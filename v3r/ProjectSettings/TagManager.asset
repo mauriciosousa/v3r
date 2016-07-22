@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - storydisp
+  - histo
+  - funtionline
+  - color_cursor
+  - color_picker_camera
+  - color_picker_background
+  - color_indicator
+  - touch_camera
+  - cursor
+  - col_l
+  - col_r
+  - multigraph
+  - provline
+  - touched
+  - axisX
+  - axisY
+  - axisZ
+  - color_picker
+  - color_camera
+  - measure
+  - measure_cube
+  - measure_plane
+  - clip_face
+  - camera_lines
+  - clip_plane
+  - color_picker_background_2
+  - 2dcanvas
+  - Nexus
+  - customfunction
+  - exchange
+  - VolumeData
+  - Spatial
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Touch Layer
+  - no light
+  - background image
+  - camera widget
+  - grapher
+  - measures
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
