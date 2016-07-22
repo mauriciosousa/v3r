@@ -13,6 +13,8 @@ public class TouchController : MonoBehaviour {
     public bool remote;
     private UdpBroadcast udpBroadcast;
 
+
+
 	// Use this for initialization
 	void Start ()
     {

@@ -4,3 +4,5 @@ Temp/
 Library/
 bin/
 *.sln
+
+remote-touch-controller/ProjectSettings/ProjectVersion.txt

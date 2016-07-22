@@ -18,6 +18,10 @@ public class SimpleObjController : MonoBehaviour {
     private Quaternion _resetRotation;
     private Vector3 _resetScale;
 
+
+	public Slider brightnessSlider;
+	public Slider slicesSlider;
+
 	void Start () {
         touchMessage = null;
 
@@ -110,7 +114,16 @@ public class SimpleObjController : MonoBehaviour {
                 }
             }
         }
+
+		_updateDesk();
+
     }
+
+	private void _updateDesk()
+	{
+		slicesSlider.percentage = 1 - Mathf.Clamp(volume.clipDimensions2.z / 100, 0, 1);
+		brightnessSlider.percentage = Mathf.Clamp(volume.bright, 0, 1);
+	}
 
     private void _keyboardInput()
     {
@@ -197,12 +210,12 @@ public class SimpleObjController : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.A))
         {
-            volume.bright -= 0.1f * Time.deltaTime;
+			if (volume.bright >= 0) volume.bright -= 0.5f * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            volume.bright += 0.1f * Time.deltaTime;
+			if (volume.bright <= 1) volume.bright += 0.5f * Time.deltaTime;
         }
     }
 
