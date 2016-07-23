@@ -217,6 +217,18 @@ public class SimpleObjController : MonoBehaviour {
         {
 			if (volume.bright <= 1) volume.bright += 0.5f * Time.deltaTime;
         }
+
+		// opacity
+
+		if (Input.GetKey(KeyCode.O))
+		{
+			if (volume.opacity >= 0) volume.opacity -= 0.5f * Time.deltaTime;
+		}
+
+		if (Input.GetKey(KeyCode.L))
+		{
+			if (volume.opacity <= 1) volume.opacity += 0.5f * Time.deltaTime;
+		}
     }
 
     private void resetVolume()
