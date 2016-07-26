@@ -12,15 +12,25 @@ public class Slider : MonoBehaviour {
     private Renderer _renderer;
     private float _mainTextureScale;
 
+	public GameObject sliderIcon;
+	private Renderer _sliderIconRenderer;
+
     void Start () {
         _renderer = GetComponent<Renderer>();
+		_sliderIconRenderer = sliderIcon.GetComponent<Renderer>();
         _mainTextureScale = _renderer.material.mainTextureScale.y;
 	}
 	
 	void Update () {
         _renderer.material.mainTextureOffset = new Vector2(0f, _mainTextureScale - percentage * _mainTextureScale);
-        Color color = _renderer.material.color;
-        color.a = opacity;
-        _renderer.material.color = color;
+		_changeOpacity(_renderer);
+		_changeOpacity(_sliderIconRenderer);
+	}
+
+	private void _changeOpacity(Renderer renderer)
+	{
+		Color color = renderer.material.color;
+		color.a = opacity;
+		renderer.material.color = color;
 	}
 }

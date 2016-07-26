@@ -681,6 +681,10 @@ Prefab:
       propertyPath: opacity
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11492502, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: sliderIcon
+      value: 
+      objectReference: {fileID: 1248489938}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
   m_IsPrefabParent: 0
@@ -1109,6 +1113,10 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: 0.009
       objectReference: {fileID: 0}
+    - target: {fileID: 11492502, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: sliderIcon
+      value: 
+      objectReference: {fileID: 369271758}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
   m_IsPrefabParent: 0
