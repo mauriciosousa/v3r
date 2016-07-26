@@ -2,14 +2,25 @@
 using System.Collections;
 using System;
 
+public enum LeftHandStates
+{
+	BRIGHTNESS,
+	SLICES,
+	NONE
+}
+
 public class SimpleObjController : MonoBehaviour {
 
+	private LeftHandStates leftHandState = LeftHandStates.NONE;
+
     public RayMarching volume;
+	public Renderer volumeRenderer;
     public int rotationMax;
 
     private string touchMessage;
 
-    private int touchCount;
+    private int touchCountRight;
+	private int touchCountLeft;
     private Vector2 position;
     private float rotation;
     private float scale;
@@ -21,6 +32,8 @@ public class SimpleObjController : MonoBehaviour {
 
 	public Slider brightnessSlider;
 	public Slider slicesSlider;
+	[Range(0,1)]
+	public float SlidersNoTouchOpacity;
 
 	public GameObject RightHandNob;
 	private Vector3 _rightHandInitialPosition;
@@ -33,6 +46,8 @@ public class SimpleObjController : MonoBehaviour {
 
 	public float SlicesVelocity = 20f;
 	public float BrightnessVelocity = 0.1f;
+
+	public GameObject desk;
 
 	void Start () {
         touchMessage = null;
@@ -69,11 +84,7 @@ public class SimpleObjController : MonoBehaviour {
                 for (int i = 1; i < values.Length; i++)
                 {
                     string [] st = values[i].Split('=');
-                    if (st[0] == "S")
-                    {
-
-                    }
-                    else if (st[0] == "RH")
+                    if (st[0] == "RH")
                     {
                         RHmissing = false;
 
@@ -83,9 +94,9 @@ public class SimpleObjController : MonoBehaviour {
                         float r = float.Parse(v[3]);
                         float s = float.Parse(v[4]);
 
-						_changeHandDeskPosition(RightHandNob, p, r);
+						_changeHandDeskPosition(RightHandNob, p, r, s);
 
-                        if(tc == touchCount)
+                        if(tc == touchCountRight)
                         {
                             Vector3 pos = transform.position;
                             Vector3 rot = transform.eulerAngles;
@@ -94,9 +105,11 @@ public class SimpleObjController : MonoBehaviour {
 
 
                             pos.x += p.x - position.x;
-                            pos.y += p.y - position.y;
-                            rot.y -= r - rotation;
+							pos.x = Mathf.Clamp(pos.x, - desk.transform.localScale.x / 2, desk.transform.localScale.x / 2);
+							pos.z += p.y - position.y;
+							rot.y -= r - rotation;
                             sca += s - scale;
+
 
                             if(rot.y > 180)
                             {
@@ -115,17 +128,49 @@ public class SimpleObjController : MonoBehaviour {
 
                             sca = Mathf.Clamp(sca, 0.5f, 2.0f);
 
-                            //transform.position = pos;
-                            //transform.eulerAngles = rot;
-							//transform.localScale = new Vector3(sca, sca, sca);
+                            transform.position = pos;
+                            transform.eulerAngles = rot;
+							transform.localScale = new Vector3(sca, sca, sca);
 						
+                        }
 
+
+						if (volumeRenderer.bounds.min.z < desk.GetComponent<Renderer>().bounds.max.z) 
+						{
+							transform.position = transform.position + new Vector3(0, 0, desk.GetComponent<Renderer>().bounds.max.z - volumeRenderer.bounds.min.z);
+						}
+
+                        touchCountRight = tc;
+                        position = p;
+                        rotation = r;
+                        scale = s;
+                    }
+                    else if (st[0] == "LH")
+                    {
+						LHmissing = false;
+
+						string[] v = st[1].Split(';');
+						int tc = int.Parse(v[0]);
+						Vector2 p = new Vector2(float.Parse(v[1]), float.Parse(v[2]));
+						float r = float.Parse(v[3]);
+						float s = float.Parse(v[4]);
+
+						_changeHandDeskPosition(LeftHandNob, p, r, s);
+
+						if(tc == touchCountLeft)
+						{
 
 							float xd = (p.x - position.x);
 							float yd = (p.y - position.y);
 
-
-							if (Mathf.Abs(xd) > Mathf.Abs(yd) + 0.005)
+							if (leftHandState == LeftHandStates.NONE)
+							{
+								if (Mathf.Abs(xd) > Mathf.Abs(yd))
+									leftHandState = LeftHandStates.BRIGHTNESS;
+								else 
+									leftHandState = LeftHandStates.SLICES;
+							}
+							else if (leftHandState == LeftHandStates.BRIGHTNESS)
 							{
 								if (xd != 0)
 								{
@@ -133,9 +178,9 @@ public class SimpleObjController : MonoBehaviour {
 									volume.bright += (xd > 0 ? 1 : -1) * BrightnessVelocity * Time.deltaTime;
 									volume.bright = Mathf.Clamp(volume.bright, 0, 1);
 								}
-								else brightnessSlider.opacity = 0.4f;
-							}	
-							else
+								else brightnessSlider.opacity = SlidersNoTouchOpacity;
+							}
+							else if (leftHandState == LeftHandStates.SLICES)
 							{
 								if (yd != 0 ) 
 								{
@@ -143,31 +188,16 @@ public class SimpleObjController : MonoBehaviour {
 									volume.clipDimensions2.z += (yd > 0 ? 1 : -1) * SlicesVelocity * Time.deltaTime;
 									volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z, 0,99);
 								}
-								else slicesSlider.opacity = 0.4f;
+								else slicesSlider.opacity = SlidersNoTouchOpacity;	
 							}
-                        }
-
-                        touchCount = tc;
-                        position = p;
-                        rotation = r;
-                        scale = s;
-                    }
-                    else if (st[0] == "LH")
-                    {
-						string[] v = st[1].Split(';');
-						int tc = int.Parse(v[0]);
-						Vector2 p = new Vector2(float.Parse(v[1]), float.Parse(v[2]));
-						float r = float.Parse(v[3]);
-						float s = float.Parse(v[4]);
-
-
-
+						}
+						touchCountLeft = tc;
                     }
                 }
 
                 if (RHmissing)
                 {
-                    touchCount = 0;
+                    touchCountRight = 0;
                     position = Vector2.zero;
                     rotation = 0;
                     scale = 1;
@@ -175,17 +205,16 @@ public class SimpleObjController : MonoBehaviour {
 
 				if (LHmissing)
 				{
-					// do nothing
+					touchCountLeft = 0;
+					brightnessSlider.opacity = SlidersNoTouchOpacity;
+					slicesSlider.opacity = SlidersNoTouchOpacity;
+					leftHandState = LeftHandStates.NONE;
 				}
 
 
 				setGameobjectVisibility(RightHandNob, !RHmissing);
 				setGameobjectVisibility(LeftHandNob, !LHmissing);
-				if (RHmissing && LHmissing)
-				{
-					brightnessSlider.opacity = 0.4f;
-					slicesSlider.opacity = 0.4f;
-				}
+
             }
         }
 
@@ -193,15 +222,18 @@ public class SimpleObjController : MonoBehaviour {
 
     }
 
-	private void _changeHandDeskPosition(GameObject go, Vector2 position, float rotation)
+	private void _changeHandDeskPosition(GameObject go, Vector2 position, float rotation, float scale)
 	{
 		Vector3 init = (go.name == "HandRightNob") ? _rightHandInitialPosition : _leftHandInitialPosition;
 
 		go.transform.position = init + new Vector3(nobPositionFactor * position.x, 0, nobPositionFactor * position.y);
 
+
 		Vector3 r = go.transform.eulerAngles;
 		r.y =  - rotation;
 		go.transform.eulerAngles = r;
+
+		go.transform.localScale = new Vector3(1 + 0.1f * scale, 1, 1 + 0.1f * scale);
 
 	}
 
