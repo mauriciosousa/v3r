@@ -14,6 +14,8 @@ public class SimpleObjController : MonoBehaviour {
 
 	private LeftHandStates leftHandState = LeftHandStates.NONE;
 
+    public bool keyboardSupport;
+
     public RayMarching volume;
 	public Renderer volumeRenderer;
     public int rotationMax;
@@ -27,7 +29,10 @@ public class SimpleObjController : MonoBehaviour {
     private float rotation;
     private float scale;
 
-
+    [SerializeField]
+    private bool recenter = false;
+    private Quaternion recenterRotation;
+    public float lerpTimeMax;
 
     private Vector3 _resetPosition;
     private Quaternion _resetRotation;
@@ -51,6 +56,8 @@ public class SimpleObjController : MonoBehaviour {
 
 	public GameObject desk;
 
+    private float lerptime = 0;
+
 	void Start () {
         touchMessage = null;
 
@@ -64,14 +71,13 @@ public class SimpleObjController : MonoBehaviour {
 	
 	void Update ()
     {
-        _keyboardInput();
+        if (keyboardSupport) _keyboardInput();
 
 		LeftHandNob.transform.position = _leftHandInitialPosition;
 		RightHandNob.transform.position = _rightHandInitialPosition;
 
 
-        // Parse Message
-        if (touchMessage != null)
+        if (touchMessage != null) // Parse Message
         {
             string[] values = touchMessage.Split('/');
             touchMessage = null;
@@ -109,7 +115,8 @@ public class SimpleObjController : MonoBehaviour {
                             pos.x += p.x - positionRight.x;
 							pos.x = Mathf.Clamp(pos.x, - desk.transform.localScale.x / 2, desk.transform.localScale.x / 2);
 							pos.z += p.y - positionRight.y;
-							rot.y -= r - rotation;
+                            pos.z = Mathf.Clamp(pos.z, 0, 1);
+                            rot.y -= r - rotation;
                             sca += s - scale;
 
 
@@ -128,7 +135,8 @@ public class SimpleObjController : MonoBehaviour {
                                 }
                             }
 
-                            sca = Mathf.Clamp(sca, 0.5f, 2.0f);
+                            sca = Mathf.Clamp(sca, 0.5f, 3.0f);
+
 
                             transform.position = pos;
                             transform.eulerAngles = rot;
@@ -195,10 +203,30 @@ public class SimpleObjController : MonoBehaviour {
 
                 if (RHmissing)
                 {
+                    if(touchCountRight > 0)
+                    {
+                        recenter = true;
+                        recenterRotation = transform.rotation;
+                        lerptime = 0f;
+                    }
+
                     touchCountRight = 0;
                     positionRight = Vector2.zero;
                     rotation = 0;
                     scale = 1;
+
+                    if (recenter)
+                    {
+                        if (lerptime < lerpTimeMax)
+                        {
+                            lerptime += Time.deltaTime;
+                            transform.rotation = Quaternion.Lerp(recenterRotation, Quaternion.identity, lerptime / lerpTimeMax);
+                        }
+                        else
+                        {
+                            recenter = false;
+                        }
+                    }
                 }
 
 				if (LHmissing)

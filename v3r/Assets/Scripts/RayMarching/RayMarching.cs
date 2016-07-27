@@ -29,7 +29,7 @@ public class RayMarching : MonoBehaviour
 	public float slices_measure_2 = 25f;
 	public bool invert;
 	[SerializeField]
-	private Texture2D[] slices;
+	public Texture2D[] slices;
 	[SerializeField][Range(0, 1)]
 	public float opacity = 1;
 	[Header("Volume texture size. These must be a power of 2")]
