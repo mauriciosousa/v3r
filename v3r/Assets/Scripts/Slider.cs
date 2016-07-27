@@ -15,6 +15,8 @@ public class Slider : MonoBehaviour {
 	public GameObject sliderIcon;
 	private Renderer _sliderIconRenderer;
 
+	public TextMesh textMesh = null;
+
     void Start () {
         _renderer = GetComponent<Renderer>();
 		_sliderIconRenderer = sliderIcon.GetComponent<Renderer>();
@@ -25,6 +27,13 @@ public class Slider : MonoBehaviour {
         _renderer.material.mainTextureOffset = new Vector2(0f, _mainTextureScale - percentage * _mainTextureScale);
 		_changeOpacity(_renderer);
 		_changeOpacity(_sliderIconRenderer);
+
+		if (textMesh != null)
+		{
+			Color color = textMesh.color;
+			color.a = opacity;
+			textMesh.color = color;
+		}
 	}
 
 	private void _changeOpacity(Renderer renderer)

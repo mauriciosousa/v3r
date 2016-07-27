@@ -13,6 +13,6 @@ public class SliceNumber : MonoBehaviour {
 
         int slice = volume.slices.Length * ((int)Mathf.Clamp(volume.clipDimensions2.z, 0, 100)) / 100;
 
-        gameObject.GetComponent<TextMesh>().text = "" + slice;
+		gameObject.GetComponent<TextMesh>().text = "" + (slice > 0 ? slice : 1);
 	}
 }

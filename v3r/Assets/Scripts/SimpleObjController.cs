@@ -58,6 +58,11 @@ public class SimpleObjController : MonoBehaviour {
 
     private float lerptime = 0;
 
+
+	private bool _vrmode = true;
+	private Vector3 _vrCameraPosition;
+	private Quaternion _vrCameraRotation;
+
 	void Start () {
         touchMessage = null;
 
@@ -67,10 +72,32 @@ public class SimpleObjController : MonoBehaviour {
 
 		_rightHandInitialPosition = RightHandNob.transform.position;
 		_leftHandInitialPosition = LeftHandNob.transform.position;
+
+		_vrCameraPosition = Camera.main.transform.position;
+		_vrCameraRotation = Camera.main.transform.rotation;
 	}
 	
 	void Update ()
     {
+		if (Input.GetKey(KeyCode.R))
+		{
+			resetVolume();
+		}
+		if (Input.GetKeyDown(KeyCode.P))
+		{
+			if (_vrmode)
+			{
+				Camera.main.transform.position = new Vector3(0f, 0.3f, Camera.main.transform.position.z);
+				Camera.main.transform.rotation = Quaternion.Euler(new Vector3(20f, 0f, 0f));
+			}
+			else
+			{
+				Camera.main.transform.position = _vrCameraPosition;
+				Camera.main.transform.rotation = _vrCameraRotation;
+			}
+			_vrmode = !_vrmode;
+		}
+
         if (keyboardSupport) _keyboardInput();
 
 		LeftHandNob.transform.position = _leftHandInitialPosition;
@@ -362,18 +389,6 @@ public class SimpleObjController : MonoBehaviour {
         {
 			if (volume.bright < 1) volume.bright += 0.5f * Time.deltaTime;
         }
-
-		// opacity
-
-		if (Input.GetKey(KeyCode.O))
-		{
-			if (volume.opacity > 0) volume.opacity -= 0.1f * Time.deltaTime;
-		}
-
-		if (Input.GetKey(KeyCode.L))
-		{
-			if (volume.opacity < 1) volume.opacity += 0.1f * Time.deltaTime;
-		}
     }
 
     private void resetVolume()

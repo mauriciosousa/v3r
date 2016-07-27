@@ -747,6 +747,10 @@ Prefab:
       propertyPath: m_LocalScale.z
       value: 0.04
       objectReference: {fileID: 0}
+    - target: {fileID: 11492502, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: textMesh
+      value: 
+      objectReference: {fileID: 1210988628}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
   m_IsPrefabParent: 0
@@ -851,7 +855,7 @@ TextMesh:
   m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 0
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 0
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
@@ -892,7 +896,7 @@ Transform:
   m_GameObject: {fileID: 1210988627}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071067}
   m_LocalPosition: {x: 0.0303, y: 0, z: -0.269}
-  m_LocalScale: {x: 0.02, y: 0.02, z: 1}
+  m_LocalScale: {x: 0.006, y: 0.006, z: 1}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1445721227}
