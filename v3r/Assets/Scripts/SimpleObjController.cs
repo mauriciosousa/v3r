@@ -4,6 +4,7 @@ using System;
 
 public enum LeftHandStates
 {
+    TOUCH,
 	BRIGHTNESS,
 	SLICES,
 	NONE
@@ -21,9 +22,12 @@ public class SimpleObjController : MonoBehaviour {
 
     private int touchCountRight;
 	private int touchCountLeft;
-    private Vector2 position;
+    private Vector2 positionRight;
+    private Vector2 positionLeft;
     private float rotation;
     private float scale;
+
+
 
     private Vector3 _resetPosition;
     private Quaternion _resetRotation;
@@ -43,9 +47,7 @@ public class SimpleObjController : MonoBehaviour {
 	[Range(0.1f, 1f)]
 	public float nobPositionFactor = 0.1f;
 
-
-	public float SlicesVelocity = 20f;
-	public float BrightnessVelocity = 0.1f;
+	public float SliderFactor = 1f;
 
 	public GameObject desk;
 
@@ -104,9 +106,9 @@ public class SimpleObjController : MonoBehaviour {
 
 
 
-                            pos.x += p.x - position.x;
+                            pos.x += p.x - positionRight.x;
 							pos.x = Mathf.Clamp(pos.x, - desk.transform.localScale.x / 2, desk.transform.localScale.x / 2);
-							pos.z += p.y - position.y;
+							pos.z += p.y - positionRight.y;
 							rot.y -= r - rotation;
                             sca += s - scale;
 
@@ -141,7 +143,7 @@ public class SimpleObjController : MonoBehaviour {
 						}
 
                         touchCountRight = tc;
-                        position = p;
+                        positionRight = p;
                         rotation = r;
                         scale = s;
                     }
@@ -159,46 +161,42 @@ public class SimpleObjController : MonoBehaviour {
 
 						if(tc == touchCountLeft)
 						{
-
-							float xd = (p.x - position.x);
-							float yd = (p.y - position.y);
+                            
+							float xd = (p.x - positionLeft.x);
+							float yd = (p.y - positionLeft.y);
 
 							if (leftHandState == LeftHandStates.NONE)
 							{
-								if (Mathf.Abs(xd) > Mathf.Abs(yd))
+                                if (Mathf.Abs(p.x) > 0.1f)
 									leftHandState = LeftHandStates.BRIGHTNESS;
-								else 
-									leftHandState = LeftHandStates.SLICES;
+								else if (Mathf.Abs(p.y) > 0.1f)
+                                    leftHandState = LeftHandStates.SLICES;
 							}
 							else if (leftHandState == LeftHandStates.BRIGHTNESS)
 							{
-								if (xd != 0)
-								{
-									brightnessSlider.opacity = 1f;
-									volume.bright += (xd > 0 ? 1 : -1) * BrightnessVelocity * Time.deltaTime;
-									volume.bright = Mathf.Clamp(volume.bright, 0, 1);
-								}
-								else brightnessSlider.opacity = SlidersNoTouchOpacity;
+                                brightnessSlider.opacity = 1f;
+
+                                volume.bright += xd * SliderFactor;
+							    volume.bright = Mathf.Clamp(volume.bright, 0, 1);
+								
 							}
 							else if (leftHandState == LeftHandStates.SLICES)
 							{
-								if (yd != 0 ) 
-								{
-									slicesSlider.opacity = 1f;
-									volume.clipDimensions2.z += (yd > 0 ? 1 : -1) * SlicesVelocity * Time.deltaTime;
-									volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z, 0,99);
-								}
-								else slicesSlider.opacity = SlidersNoTouchOpacity;	
+                                slicesSlider.opacity = 1f;
+                                volume.clipDimensions2.z += yd * SliderFactor * 100.0f;
+							    volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z, 0,99);
+							
 							}
 						}
 						touchCountLeft = tc;
+                        positionLeft = p;
                     }
                 }
 
                 if (RHmissing)
                 {
                     touchCountRight = 0;
-                    position = Vector2.zero;
+                    positionRight = Vector2.zero;
                     rotation = 0;
                     scale = 1;
                 }

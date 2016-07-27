@@ -546,15 +546,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   volume: {fileID: 2030573225}
   volumeRenderer: {fileID: 528698770}
-  rotationMax: 40
+  rotationMax: 45
   brightnessSlider: {fileID: 1174544165}
   slicesSlider: {fileID: 1909802237}
   SlidersNoTouchOpacity: 0.4
   RightHandNob: {fileID: 903827468}
   LeftHandNob: {fileID: 1144783001}
   nobPositionFactor: 0.2
-  SlicesVelocity: 20
-  BrightnessVelocity: 0.1
+  SliderFactor: 1
   desk: {fileID: 1456662865}
 --- !u!114 &1030392361
 MonoBehaviour:
@@ -1406,10 +1405,10 @@ Transform:
   m_PrefabParentObject: {fileID: 449974, guid: fe184b5aa9c442c4b85f28de1c6c71c5, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2030573223}
-  m_LocalRotation: {x: 0.25886536, y: 0, z: 0, w: 0.9659134}
-  m_LocalPosition: {x: 0, y: 0.93, z: -1.56}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 30.005499, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
