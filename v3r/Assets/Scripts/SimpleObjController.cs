@@ -12,12 +12,14 @@ public enum LeftHandStates
 
 public class SimpleObjController : MonoBehaviour {
 
-	private LeftHandStates leftHandState = LeftHandStates.NONE;
+    private float rott;
+
+    private LeftHandStates leftHandState = LeftHandStates.NONE;
 
     public bool keyboardSupport;
 
     public RayMarching volume;
-	public Renderer volumeRenderer;
+	public Collider volumeRenderer;
     public int rotationMax;
 
     private string touchMessage;
@@ -136,14 +138,23 @@ public class SimpleObjController : MonoBehaviour {
                             Vector3 pos = transform.position;
                             Vector3 rot = transform.eulerAngles;
                             float sca = transform.localScale.x;
-
-
-
                             pos.x += p.x - positionRight.x;
 							pos.x = Mathf.Clamp(pos.x, - desk.transform.localScale.x / 2, desk.transform.localScale.x / 2);
-							pos.z += p.y - positionRight.y;
-                            pos.z = Mathf.Clamp(pos.z, 0, 1);
+							//pos.z += p.y - positionRight.y;
+                            //pos.z = Mathf.Clamp(pos.z, 0, 1);
                             rot.y -= r - rotation;
+                            rot.x -= 45f * -(p.y - positionRight.y);
+
+                            rott = rot.x;
+
+                            if (rot.x <= 0) rot.x += 360;
+                            else if (rot.x > 360) rot.x -= 360;
+
+                            if (rot.x < 180)
+                                rot.x = 0;
+                            else if (rot.x < 360 - 45)
+                                rot.x = 360 - 45;
+
                             sca += s - scale;
 
 
@@ -162,7 +173,7 @@ public class SimpleObjController : MonoBehaviour {
                                 }
                             }
 
-                            sca = Mathf.Clamp(sca, 0.5f, 3.0f);
+                            sca = Mathf.Clamp(sca, 0.5f, 4.0f);
 
 
                             transform.position = pos;
@@ -172,10 +183,10 @@ public class SimpleObjController : MonoBehaviour {
                         }
 
 
-						if (volumeRenderer.bounds.min.z < desk.GetComponent<Renderer>().bounds.max.z) 
+						/*if (volumeRenderer.bounds.min.z < desk.GetComponent<Renderer>().bounds.max.z - 0.10f) 
 						{
-							transform.position = transform.position + new Vector3(0, 0, desk.GetComponent<Renderer>().bounds.max.z - volumeRenderer.bounds.min.z);
-						}
+							transform.position += new Vector3(0, 0, desk.GetComponent<Renderer>().bounds.max.z - volumeRenderer.bounds.min.z);
+						}*/
 
                         touchCountRight = tc;
                         positionRight = p;
@@ -247,7 +258,8 @@ public class SimpleObjController : MonoBehaviour {
                         if (lerptime < lerpTimeMax)
                         {
                             lerptime += Time.deltaTime;
-                            transform.rotation = Quaternion.Lerp(recenterRotation, Quaternion.identity, lerptime / lerpTimeMax);
+                            //transform.rotation = Quaternion.Lerp(recenterRotation, Quaternion.identity, lerptime / lerpTimeMax);
+                            transform.rotation = Quaternion.Lerp(recenterRotation, Quaternion.Euler(recenterRotation.eulerAngles.x, 0, 0), lerptime / lerpTimeMax);
                         }
                         else
                         {
@@ -271,7 +283,9 @@ public class SimpleObjController : MonoBehaviour {
             }
         }
 
-		_updateDesk();
+        transform.position += new Vector3(0, desk.GetComponent<Renderer>().bounds.max.y - volumeRenderer.bounds.min.y, desk.GetComponent<Renderer>().bounds.max.z - volumeRenderer.bounds.min.z);
+
+        _updateDesk();
 
     }
 
@@ -286,7 +300,7 @@ public class SimpleObjController : MonoBehaviour {
 		r.y =  - rotation;
 		go.transform.eulerAngles = r;
 
-		go.transform.localScale = new Vector3(1 + 0.1f * scale, 1, 1 + 0.1f * scale);
+		go.transform.localScale = new Vector3(1 + 0.15f * scale, 1, 1 + 0.15f * scale);
 
 	}
 
@@ -391,6 +405,7 @@ public class SimpleObjController : MonoBehaviour {
         }
     }
 
+
     private void resetVolume()
     {
         transform.position = _resetPosition;
@@ -415,4 +430,9 @@ public class SimpleObjController : MonoBehaviour {
 	{
 		return (value > bottom && value < top);
 	}
+
+    void OnGUI()
+    {
+        //GUI.Label(new Rect(100, 100, 100, 100), "" + rott);
+    }
 }
