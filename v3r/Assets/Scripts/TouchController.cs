@@ -76,6 +76,8 @@ public class TouchController : MonoBehaviour {
 
         if(rightHandTouchesList.Count > 0)
         {
+            
+
             // Calc new center
             Vector2 touchCenter = calcCenter(rightHandTouchesList);
 

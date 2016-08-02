@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class TouchController : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class TouchController : MonoBehaviour
 
     private UdpBroadcast udpBroadcast;
 
+    private bool TAP = false;
+    private bool tapWait = false;
+    private int tapCounter = 0;
+    private DateTime tapTimeStamp;
+    public float tapTimeSeconds = 0.3f;
+
     // Use this for initialization
     void Start()
     {
@@ -38,6 +45,8 @@ public class TouchController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        TAP = false;
+
         string msg = "V3R";
 
         Dictionary<int, Touch> newRightHandTouches = new Dictionary<int, Touch>();
@@ -74,6 +83,15 @@ public class TouchController : MonoBehaviour
 
         if (rightHandTouchesList.Count > 0)
         {
+            if (rightHandTouchesList.Count == 5)
+            {
+                if (!tapWait)
+                {
+                    tapWait = true;
+                    tapTimeStamp = DateTime.Now;
+                }
+            }
+
             // Calc new center
             Vector2 touchCenter = calcCenter(rightHandTouchesList);
 
@@ -95,7 +113,23 @@ public class TouchController : MonoBehaviour
         else
         {
             rightHandObj.SetActive(false);
+
+
+            if (tapWait)
+            {
+                if (DateTime.Now < tapTimeStamp.AddMilliseconds(0.3f * 1000))
+                {
+                    TAP = true;
+                }
+                else
+                {
+                    tapWait = false;
+                    tapCounter = 0;
+                }
+            }
         }
+
+        
 
         rightHandLastTouchCount = rightHandTouchesList.Count;
 
@@ -137,6 +171,7 @@ public class TouchController : MonoBehaviour
         }
 
         // Send message
+        msg += "/tap=" + (TAP ? 1 : 0);
 
         print(msg);
         udpBroadcast.send(msg);
@@ -216,5 +251,12 @@ public class TouchController : MonoBehaviour
             Vector2 touchCenterDelta = touchCenter - lastTouchCenter;
             gameObject.transform.position += new Vector3(touchCenterDelta.x / (float)Screen.height, touchCenterDelta.y / (float)Screen.height, 0) * 2.0f;
         }
+    }
+
+    void OnGUI()
+    {
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 500;
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), (TAP ? "TAP" : ""), style);
     }
 }
