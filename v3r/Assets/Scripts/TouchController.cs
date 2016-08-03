@@ -1,29 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
-public class TouchController : MonoBehaviour {
+public class TouchController : MonoBehaviour
+{
+
+
+    Dictionary<int, Vector2> lastTouchPositions;
+
+    Vector2 rightHandLastTouchCenter;
+    Vector2 leftHandLastTouchCenter;
+    int rightHandLastTouchCount;
+    int leftHandLastTouchCount;
+    float rightHandLastDistance;
+    float leftHandLastDistance;
+    Dictionary<int, Touch> rightHandTouches;
+    Dictionary<int, Touch> leftHandTouches;
 
     public GameObject rightHandObj;
     public GameObject leftHandObj;
 
-    private Dictionary<int, Touch> rightHandTouches;
-    private int rightHandLastTouchCount;
-    private Vector2 rightHandLastTouchCenter;
-    private float rightHandLastDistance;
-
-    private Dictionary<int, Touch> leftHandTouches;
-    private int leftHandLastTouchCount;
-    private Vector2 leftHandLastTouchCenter;
-    private float leftHandLastDistance;
-
-    private Dictionary<int, Vector2> lastTouchPositions;
-
     private UdpBroadcast udpBroadcast;
-    private bool send;
 
-	// Use this for initialization
-	void Start ()
+    private bool TAP = false;
+    private bool tapWait = false;
+    private int tapCounter = 0;
+    private DateTime tapTimeStamp;
+    public float tapTimeSeconds = 0.3f;
+
+    // Use this for initialization
+    void Start()
     {
         lastTouchPositions = new Dictionary<int, Vector2>();
 
@@ -33,12 +40,13 @@ public class TouchController : MonoBehaviour {
         leftHandTouches = new Dictionary<int, Touch>();
 
         udpBroadcast = new UdpBroadcast(11911);
-        send = false;
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
+        TAP = false;
+
         string msg = "V3R";
 
         Dictionary<int, Touch> newRightHandTouches = new Dictionary<int, Touch>();
@@ -46,7 +54,6 @@ public class TouchController : MonoBehaviour {
 
         for (int i = 0; i < Input.touchCount; i++)
         {
-            send = true;
             Touch t = Input.GetTouch(i);
             if (rightHandTouches.ContainsKey(t.fingerId))
             {
@@ -65,7 +72,7 @@ public class TouchController : MonoBehaviour {
                 newLeftHandTouches[t.fingerId] = t;
             }
         }
-            
+
         rightHandTouches = new Dictionary<int, Touch>(newRightHandTouches);
         leftHandTouches = new Dictionary<int, Touch>(newLeftHandTouches);
 
@@ -74,9 +81,16 @@ public class TouchController : MonoBehaviour {
 
         // Right Hand
 
-        if(rightHandTouchesList.Count > 0)
+        if (rightHandTouchesList.Count > 0)
         {
-            
+            if (rightHandTouchesList.Count == 5)
+            {
+                if (!tapWait)
+                {
+                    tapWait = true;
+                    tapTimeStamp = DateTime.Now;
+                }
+            }
 
             // Calc new center
             Vector2 touchCenter = calcCenter(rightHandTouchesList);
@@ -99,7 +113,23 @@ public class TouchController : MonoBehaviour {
         else
         {
             rightHandObj.SetActive(false);
+
+
+            if (tapWait)
+            {
+                if (DateTime.Now < tapTimeStamp.AddMilliseconds(0.3f * 1000))
+                {
+                    TAP = true;
+                }
+                else
+                {
+                    tapWait = false;
+                    tapCounter = 0;
+                }
+            }
         }
+
+
 
         rightHandLastTouchCount = rightHandTouchesList.Count;
 
@@ -141,10 +171,11 @@ public class TouchController : MonoBehaviour {
         }
 
         // Send message
-        if (send)
-        {
-            udpBroadcast.send(msg);
-        }
+        msg += "/tap=" + (TAP ? 1 : 0);
+        
+
+        //print(msg);
+        udpBroadcast.send(msg);
     }
 
     private Vector2 calcCenter(List<Touch> touches)
@@ -221,5 +252,10 @@ public class TouchController : MonoBehaviour {
             Vector2 touchCenterDelta = touchCenter - lastTouchCenter;
             gameObject.transform.position += new Vector3(touchCenterDelta.x / (float)Screen.height, touchCenterDelta.y / (float)Screen.height, 0) * 2.0f;
         }
+    }
+
+    void OnGUI()
+    {
+       
     }
 }

@@ -614,6 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandObj: {fileID: 942233270}
   leftHandObj: {fileID: 1793063589}
+  tapTimeSeconds: 0.3
 --- !u!1 &1032397851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1121,7 +1122,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1450657767}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0.45, z: 1}
+  m_LocalPosition: {x: 0, y: 0.2, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 89.980194, y: 0, z: 0}
   m_Children:
@@ -1570,7 +1571,7 @@ MonoBehaviour:
   volumeHeight: 256
   volumeDepth: 256
   clipDimensions: {x: 99, y: 99, z: 99}
-  clipDimensions2: {x: 0, y: 8.9, z: 0}
+  clipDimensions2: {x: 0, y: 9, z: 0}
   Norm: 1
   bright: 0.75
   volume: {fileID: 1450657767}
