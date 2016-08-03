@@ -41,7 +41,7 @@ public class RayMarching : MonoBehaviour
 	private int volumeDepth = 256;
 	[Header("Clipping planes percentage")]
 	[SerializeField]
-	private Vector3 clipDimensions = new Vector3(100, 100, 100);
+	public Vector3 clipDimensions = new Vector3(100, 100, 100);
 	//
 	[Header("Clipping planes percentage")]
 	[SerializeField]
