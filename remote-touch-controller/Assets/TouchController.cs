@@ -256,6 +256,7 @@ public class TouchController : MonoBehaviour
     void OnGUI()
     {
         GUIStyle style = new GUIStyle();
+        style.normal.textColor = Color.white;
         style.fontSize = 500;
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), (TAP ? "TAP" : ""), style);
     }
