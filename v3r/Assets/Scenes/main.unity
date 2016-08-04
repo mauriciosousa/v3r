@@ -85,6 +85,35 @@ NavMeshSettings:
     cellSize: 0.16666666
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &21849057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 21849058}
+  m_Layer: 0
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &21849058
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 21849057}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.25, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1030392359}
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
 --- !u!1 &118095254
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +530,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
 --- !u!1 &975142775
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,13 +586,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1030392358}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1450657768}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 21849058}
+  m_RootOrder: 0
 --- !u!114 &1030392360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,6 +609,7 @@ MonoBehaviour:
   volumeFace: 4
   volumeRenderer: {fileID: 1885166369}
   rotationMax: 45
+  Canvas: {fileID: 21849058}
   recenter: 0
   lerpTimeMax: 0.25
   brightnessSlider: {fileID: 1174544165}
@@ -616,6 +646,7 @@ MonoBehaviour:
   rightHandObj: {fileID: 942233270}
   leftHandObj: {fileID: 1793063589}
   tapTimeSeconds: 0.3
+  doubletapTimeSeconds: 0.6
 --- !u!1 &1032397851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1342,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!1 &1885166366
 GameObject:
   m_ObjectHideFlags: 0

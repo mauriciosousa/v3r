@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+public enum TapGesture
+{
+    TAP,
+    DOUBLETAP,
+    NONE
+}
+
 public class TouchController : MonoBehaviour
 {
-
-
     Dictionary<int, Vector2> lastTouchPositions;
 
     Vector2 rightHandLastTouchCenter;
@@ -23,11 +28,18 @@ public class TouchController : MonoBehaviour
 
     private UdpBroadcast udpBroadcast;
 
-    private bool TAP = false;
+    private TapGesture tapGesture = TapGesture.NONE;
     private bool tapWait = false;
-    private int tapCounter = 0;
     private DateTime tapTimeStamp;
     public float tapTimeSeconds = 0.3f;
+
+    private bool doubletapWait = false;
+    private DateTime doubletapTimeStamp;
+    public float doubletapTimeSeconds = 1f;
+
+
+    private int tapCounter = 0;
+    private int doubletabCounter = 0;
 
     // Use this for initialization
     void Start()
@@ -45,7 +57,7 @@ public class TouchController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        TAP = false;
+        tapGesture = TapGesture.NONE;
 
         string msg = "V3R";
 
@@ -114,18 +126,22 @@ public class TouchController : MonoBehaviour
         {
             rightHandObj.SetActive(false);
 
-
+            doubletapWait = DateTime.Now < doubletapTimeStamp.AddMilliseconds(doubletapTimeSeconds * 1000);
             if (tapWait)
             {
-                if (DateTime.Now < tapTimeStamp.AddMilliseconds(0.3f * 1000))
+                if (DateTime.Now < tapTimeStamp.AddMilliseconds(tapTimeSeconds * 1000))
                 {
-                    TAP = true;
+                    if (doubletapWait)
+                    {
+                        tapGesture = TapGesture.DOUBLETAP;
+                    }
+                    else
+                    {
+                        tapGesture = TapGesture.TAP;
+                        doubletapTimeStamp = DateTime.Now;
+                    }
                 }
-                else
-                {
-                    tapWait = false;
-                    tapCounter = 0;
-                }
+                tapWait = false;
             }
         }
 
@@ -171,8 +187,7 @@ public class TouchController : MonoBehaviour
         }
 
         // Send message
-        msg += "/tap=" + (TAP ? 1 : 0);
-        
+        if (tapGesture != TapGesture.NONE) msg += "/" + tapGesture.ToString();
 
         //print(msg);
         udpBroadcast.send(msg);
@@ -256,6 +271,6 @@ public class TouchController : MonoBehaviour
 
     void OnGUI()
     {
-       
+        
     }
 }

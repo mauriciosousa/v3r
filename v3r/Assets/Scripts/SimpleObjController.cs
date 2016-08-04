@@ -14,7 +14,7 @@ public class SimpleObjController : MonoBehaviour {
 
     private string debugMessage;
 
-    private bool tapDebug = false;
+    private string tapDebug = "";
 
     private LeftHandStates leftHandState = LeftHandStates.NONE;
 
@@ -25,6 +25,8 @@ public class SimpleObjController : MonoBehaviour {
 	public Collider volumeRenderer;
     public int rotationMax;
 
+    public Transform Canvas;
+
     private string touchMessage;
     private string touchMessageGUI;
 
@@ -32,7 +34,8 @@ public class SimpleObjController : MonoBehaviour {
 	private int touchCountLeft;
     private Vector2 positionRight;
     private Vector2 positionLeft;
-    private float rotation;
+    private float rightRotation;
+    private float leftRotation;
     private float scale;
 
     [SerializeField]
@@ -53,8 +56,10 @@ public class SimpleObjController : MonoBehaviour {
 
 	public GameObject RightHandNob;
 	private Vector3 _rightHandInitialPosition;
+    private float rightHandTravel = 0;
 	public GameObject LeftHandNob;
 	private Vector3 _leftHandInitialPosition;
+    private float leftHandRotationTravel = 0;
 
 	[Range(0.1f, 1f)]
 	public float nobPositionFactor = 0.1f;
@@ -113,7 +118,7 @@ public class SimpleObjController : MonoBehaviour {
 		RightHandNob.transform.position = _rightHandInitialPosition;
 
 
-        tapDebug = false;
+        tapDebug = "";
 
         if (touchMessage != null) // Parse Message
         {
@@ -146,25 +151,37 @@ public class SimpleObjController : MonoBehaviour {
                         if (tc == touchCountRight)
                         {
                             Vector3 pos = transform.position;
-                            Vector3 rot = transform.eulerAngles;
+                            Vector3 rot = transform.localEulerAngles;
+                            Vector3 rotCanvas = Canvas.rotation.eulerAngles;
                             float sca = transform.localScale.x;
                             pos.x += p.x - positionRight.x;
                             pos.x = Mathf.Clamp(pos.x, -desk.transform.localScale.x / 2, desk.transform.localScale.x / 2);
                             //pos.z += p.y - positionRight.y;
                             //pos.z = Mathf.Clamp(pos.z, 0, 1);
-                            rot.y -= r - rotation;
-                            //rot.x -= 45f * -(p.y - positionRight.y);
+                            rot.y -= r - rightRotation;
+                            rotCanvas.x -= 25f * -(p.y - positionRight.y);
+                        
                             sca += s - scale;
 
+                            if (p.y == positionRight.y)
+                                rightHandTravel = 0f;
+                            else
+                                rightHandTravel += Mathf.Abs(p.y - positionRight.y);
+
+                            
+
+
+
+                            
+                            if (rotCanvas.x <= 0) rotCanvas.x += 360;
+                            else if (rotCanvas.x > 360) rotCanvas.x -= 360;
+
+                            if (rotCanvas.x < 180)
+                                rotCanvas.x = 0;
+                            else if (rotCanvas.x < 360 - 20)
+                                rotCanvas.x = 360 - 20;
+
                             /*
-                            if (rot.x <= 0) rot.x += 360;
-                            else if (rot.x > 360) rot.x -= 360;
-
-                            if (rot.x < 180)
-                                rot.x = 0;
-                            else if (rot.x < 360 - 45)
-                                rot.x = 360 - 45;
-
                             if (rot.y > 180)
                             {
                                 if (rot.y < (360 - rotationMax))
@@ -181,14 +198,20 @@ public class SimpleObjController : MonoBehaviour {
                             }
                             */
 
-                            
+
 
                             sca = Mathf.Clamp(sca, 0.5f, 4.0f);
                             //transform.position = pos;
-                            transform.eulerAngles = rot;
-                            transform.localScale = new Vector3(sca, sca, sca);
 
-                            debugMessage = "" + transform.rotation.eulerAngles.y;
+                            if (rightHandTravel > 0.01f)
+                            {
+                                Canvas.eulerAngles = rotCanvas;
+                            }
+                            else
+                            {
+                                transform.localEulerAngles = rot;
+                                transform.localScale = new Vector3(sca, sca, sca);
+                            }
                         }
 
 
@@ -199,7 +222,7 @@ public class SimpleObjController : MonoBehaviour {
 
                         touchCountRight = tc;
                         positionRight = p;
-                        rotation = r;
+                        rightRotation = r;
                         scale = s;
                     }
                     else if (st[0] == "LH")
@@ -211,6 +234,7 @@ public class SimpleObjController : MonoBehaviour {
                         Vector2 p = new Vector2(float.Parse(v[1]), float.Parse(v[2]));
                         float r = float.Parse(v[3]);
                         float s = float.Parse(v[4]);
+                        
 
                         _changeHandDeskPosition(LeftHandNob, p, r, s);
 
@@ -240,18 +264,21 @@ public class SimpleObjController : MonoBehaviour {
                                 slicesSlider.opacity = 1f;
                                 _cutSlice(yd * SliderFactor * 100.0f);
                             }
+
+                            debugMessage = "" + r;
                         }
                         touchCountLeft = tc;
                         positionLeft = p;
                     }
-                    else if (st[0] == "tap")
+                    else if (st[0] == "DOUBLETAP")
                     {
-                        if (st[1] == "1")
-                        {
-                            tapDebug = true;
-                            //transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
-                            resetVolume();
-                        }
+                        tapDebug = "DOUBLETAP";
+                        resetVolumeClipping();
+                    }
+                    else if (st[0] == "TAP")
+                    {
+                        tapDebug = "TAP";
+                        resetVolumeClippingCurrent();
                     }
                 }
 
@@ -262,20 +289,21 @@ public class SimpleObjController : MonoBehaviour {
                 else if (volumeFace == CubemapFace.NegativeX) recenterTarget = Quaternion.Euler(0, 90, 0);
                 else if (volumeFace == CubemapFace.NegativeZ) recenterTarget = Quaternion.Euler(0, 180, 0);
                 else if (volumeFace == CubemapFace.PositiveZ) recenterTarget = Quaternion.Euler(0, 0, 0);
-                print(recenterTarget.eulerAngles.y);
 
                 if (RHmissing)
                 {
+                    rightHandTravel = 0;
+
                     if(touchCountRight > 0)
                     {
                         recenter = true;
-                        recenterRotation = transform.rotation;
+                        recenterRotation = transform.localRotation;
                         lerptime = 0f;
                     }
 
                     touchCountRight = 0;
                     positionRight = Vector2.zero;
-                    rotation = 0;
+                    rightRotation = 0;
                     scale = 1;
 
                     if (recenter)
@@ -283,7 +311,7 @@ public class SimpleObjController : MonoBehaviour {
                         if (lerptime < lerpTimeMax)
                         {
                             lerptime += Time.deltaTime;
-                            transform.rotation = Quaternion.Lerp(recenterRotation, recenterTarget, lerptime / lerpTimeMax);
+                            transform.localRotation = Quaternion.Lerp(recenterRotation, recenterTarget, lerptime / lerpTimeMax);
                         }
                         else
                         {
@@ -340,6 +368,7 @@ public class SimpleObjController : MonoBehaviour {
     private void _calcVolumeFace()
     {
         float r = transform.rotation.eulerAngles.y;
+        
         if (r > 45 && r <= 135)
         {
             volumeFace = CubemapFace.NegativeX;
@@ -394,6 +423,69 @@ public class SimpleObjController : MonoBehaviour {
         brightnessSlider.percentage = Mathf.Clamp(volume.bright, 0, 1);
 	}
 		
+    private void resetVolume()
+    {
+        transform.position = _resetPosition;
+        transform.rotation = _resetRotation;
+        transform.localScale = _resetScale;
+    }
+
+    private void resetVolumeClipping()
+    {
+        volume.clipDimensions = _resetClip1;
+        volume.clipDimensions2 = _resetClip2;
+    }
+
+    private void resetVolumeClippingCurrent()
+    {
+        if (volumeFace == CubemapFace.PositiveX)
+        {
+            volume.clipDimensions.x = _resetClip1.x;
+        }
+        else if (volumeFace == CubemapFace.NegativeX)
+        {
+            volume.clipDimensions2.x = _resetClip2.x;
+        }
+        else if (volumeFace == CubemapFace.NegativeZ)
+        {
+            volume.clipDimensions.z = _resetClip1.z;
+        }
+        else if (volumeFace == CubemapFace.PositiveZ)
+        {
+            volume.clipDimensions2.z = _resetClip2.z;
+        }
+    }
+
+    public void setNewTouchMessage(string message)
+    {
+        touchMessage = message;
+    }
+
+	public void setGameobjectVisibility(GameObject go, bool active)
+	{
+		foreach( Transform child in go.transform )
+		{
+			child.gameObject.SetActive(active);
+		}
+	}
+
+	public bool inRange(float value, float bottom, float top)
+	{
+		return (value > bottom && value < top);
+	}
+
+    void OnGUI()
+    {
+        //GUIStyle style = new GUIStyle();
+        //style.normal.textColor = Color.white;
+        //style.fontSize = 100;
+        //GUI.Label(new Rect(0, 0, Screen.width, Screen.height), tapDebug, style);
+        //GUI.Label(new Rect(0, 0, 100, 100), "" + volumeFace);
+        //GUI.Label(new Rect(0, 35, 100, 100), debugMessage);
+
+        //GUI.Label(new Rect(0, 500, 1000, 1000), "Object: " + transform.rotation.eulerAngles);
+        //GUI.Label(new Rect(0, 535, 1000, 1000), "Canvas: " + Canvas.transform.rotation.eulerAngles);
+    }
 
     private void _keyboardInput()
     {
@@ -468,62 +560,24 @@ public class SimpleObjController : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.W))
         {
-			volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z + 10.0f * Time.deltaTime, 1, 99);
+            volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z + 10.0f * Time.deltaTime, 1, 99);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-			volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z - 10.0f * Time.deltaTime, 1, 99);
+            volume.clipDimensions2.z = Mathf.Clamp(volume.clipDimensions2.z - 10.0f * Time.deltaTime, 1, 99);
         }
 
         // brightness
 
         if (Input.GetKey(KeyCode.A))
         {
-			if (volume.bright > 0) volume.bright -= 0.5f * Time.deltaTime;
+            if (volume.bright > 0) volume.bright -= 0.5f * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-			if (volume.bright < 1) volume.bright += 0.5f * Time.deltaTime;
+            if (volume.bright < 1) volume.bright += 0.5f * Time.deltaTime;
         }
-    }
-
-
-    private void resetVolume()
-    {
-        transform.position = _resetPosition;
-        transform.rotation = _resetRotation;
-        transform.localScale = _resetScale;
-        volume.clipDimensions = _resetClip1;
-        volume.clipDimensions2 = _resetClip2;
-    }
-
-    public void setNewTouchMessage(string message)
-    {
-        touchMessage = message;
-    }
-
-	public void setGameobjectVisibility(GameObject go, bool active)
-	{
-		foreach( Transform child in go.transform )
-		{
-			child.gameObject.SetActive(active);
-		}
-	}
-
-	public bool inRange(float value, float bottom, float top)
-	{
-		return (value > bottom && value < top);
-	}
-
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle();
-        style.normal.textColor = Color.white;
-        style.fontSize = 500;
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), (tapDebug ? "TAP" : ""), style);
-        GUI.Label(new Rect(0, 0, 100, 100), "" + volumeFace);
-        GUI.Label(new Rect(0, 35, 100, 100), debugMessage);
     }
 }
