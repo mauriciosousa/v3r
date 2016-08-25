@@ -46,6 +46,7 @@ Subshader {
  Pass {
 	  ZTest Always Cull Off ZWrite Off
 	  Fog { Mode off }
+	 Tags{ "Queue" = "Background" }
 	  
       CGPROGRAM
       #pragma fragmentoption ARB_precision_hint_fastest

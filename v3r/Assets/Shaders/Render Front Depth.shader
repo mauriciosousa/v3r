@@ -28,7 +28,7 @@ Shader "Hidden/Ray Marching/Render Front Depth" {
 
 	Subshader 
 	{ 	
-		Tags {"RenderType"="Volume"}
+		Tags{ "RenderType" = "Volume" "Queue" = "Background" }
 		Fog { Mode off }
 
 		Pass 

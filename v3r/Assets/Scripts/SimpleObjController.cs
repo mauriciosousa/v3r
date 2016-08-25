@@ -45,6 +45,7 @@ public class SimpleObjController : MonoBehaviour {
 
     private Vector3 _resetPosition;
     private Quaternion _resetRotation;
+    private Quaternion _resetCanvasRotation;
     private Vector3 _resetScale;
     private Vector3 _resetClip1;
     private Vector3 _resetClip2;
@@ -78,6 +79,7 @@ public class SimpleObjController : MonoBehaviour {
 	void Start () {
         touchMessage = null;
 
+        _resetCanvasRotation = Canvas.transform.rotation;
         _resetPosition = transform.position;
         _resetRotation = transform.rotation;
         _resetScale = transform.localScale;
@@ -89,7 +91,9 @@ public class SimpleObjController : MonoBehaviour {
 
 		_vrCameraPosition = Camera.main.transform.position;
 		_vrCameraRotation = Camera.main.transform.rotation;
-	}
+
+        _pitchLookat();
+    }
 	
 	void Update ()
     {
@@ -159,20 +163,22 @@ public class SimpleObjController : MonoBehaviour {
                             //pos.z += p.y - positionRight.y;
                             //pos.z = Mathf.Clamp(pos.z, 0, 1);
                             rot.y -= r - rightRotation;
-                            rotCanvas.x -= 25f * -(p.y - positionRight.y);
-                        
-                            sca += s - scale;
+
+                            rotCanvas.x -= 20f * -(p.y - positionRight.y);
+
+                            float scaleDelta = s - scale;
+                            sca += scaleDelta;
+
+                            
 
                             if (p.y == positionRight.y)
                                 rightHandTravel = 0f;
                             else
                                 rightHandTravel += Mathf.Abs(p.y - positionRight.y);
 
-                            
 
 
 
-                            
                             if (rotCanvas.x <= 0) rotCanvas.x += 360;
                             else if (rotCanvas.x > 360) rotCanvas.x -= 360;
 
@@ -180,6 +186,9 @@ public class SimpleObjController : MonoBehaviour {
                                 rotCanvas.x = 0;
                             else if (rotCanvas.x < 360 - 20)
                                 rotCanvas.x = 360 - 20;
+
+
+
 
                             /*
                             if (rot.y > 180)
@@ -203,6 +212,8 @@ public class SimpleObjController : MonoBehaviour {
                             sca = Mathf.Clamp(sca, 0.5f, 4.0f);
                             //transform.position = pos;
 
+                            
+
                             if (rightHandTravel > 0.01f)
                             {
                                 Canvas.eulerAngles = rotCanvas;
@@ -211,6 +222,7 @@ public class SimpleObjController : MonoBehaviour {
                             {
                                 transform.localEulerAngles = rot;
                                 transform.localScale = new Vector3(sca, sca, sca);
+                                //transform.position += new Vector3(0, 100f * scaleDelta, 0);
                             }
                         }
 
@@ -265,7 +277,6 @@ public class SimpleObjController : MonoBehaviour {
                                 _cutSlice(yd * SliderFactor * 100.0f);
                             }
 
-                            debugMessage = "" + r;
                         }
                         touchCountLeft = tc;
                         positionLeft = p;
@@ -274,6 +285,8 @@ public class SimpleObjController : MonoBehaviour {
                     {
                         tapDebug = "DOUBLETAP";
                         resetVolumeClipping();
+                        resetVolume();
+                        _pitchLookat();
                     }
                     else if (st[0] == "TAP")
                     {
@@ -292,6 +305,9 @@ public class SimpleObjController : MonoBehaviour {
 
                 if (RHmissing)
                 {
+                    
+
+
                     rightHandTravel = 0;
 
                     if(touchCountRight > 0)
@@ -318,6 +334,11 @@ public class SimpleObjController : MonoBehaviour {
                             recenter = false;
                         }
                     }
+                    else
+                    {
+                        //_pitchLookat();
+
+                    }
                 }
 
 				if (LHmissing)
@@ -334,11 +355,19 @@ public class SimpleObjController : MonoBehaviour {
 
             }
         }
-
+        
         transform.position += new Vector3(0, desk.GetComponent<Renderer>().bounds.max.y - volumeRenderer.bounds.min.y, desk.GetComponent<Renderer>().bounds.max.z - volumeRenderer.bounds.min.z);
 
         _updateDesk();
 
+    }
+
+    private void _pitchLookat()
+    {
+        Vector3 t = Camera.main.transform.position + new Vector3(0, -0.2f, 0);
+        var lookPos = t - Canvas.transform.position;
+        var rotation = Quaternion.LookRotation(lookPos);
+        Canvas.transform.eulerAngles = new Vector3(- rotation.eulerAngles.x, Canvas.transform.eulerAngles.y, Canvas.transform.eulerAngles.z);
     }
 
     private void _cutSlice(float v)
@@ -425,8 +454,9 @@ public class SimpleObjController : MonoBehaviour {
 		
     private void resetVolume()
     {
+        Canvas.transform.rotation = _resetCanvasRotation;
         transform.position = _resetPosition;
-        transform.rotation = _resetRotation;
+        //transform.rotation = _resetRotation;
         transform.localScale = _resetScale;
     }
 

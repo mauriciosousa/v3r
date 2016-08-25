@@ -190,6 +190,98 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 118095254}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &273006885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 273006888}
+  - 23: {fileID: 273006887}
+  - 102: {fileID: 273006886}
+  - 114: {fileID: 273006889}
+  m_Layer: 0
+  m_Name: VolumeInfo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!102 &273006886
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 273006885}
+  m_Text: 
+  m_OffsetZ: 0
+  m_CharacterSize: 1
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 0
+  m_TabSize: 4
+  m_FontSize: 45
+  m_FontStyle: 0
+  m_RichText: 1
+  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+--- !u!23 &273006887
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 273006885}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!4 &273006888
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 273006885}
+  m_LocalRotation: {x: 0, y: 0.13052621, z: 0, w: 0.9914449}
+  m_LocalPosition: {x: 0.808, y: 0.05, z: 0}
+  m_LocalScale: {x: 0.01, y: 0.009999999, z: 0.1}
+  m_LocalEulerAnglesHint: {x: 0, y: 15, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+--- !u!114 &273006889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 273006885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae46ce26b5d872488932ded780adbf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeRenderer: {fileID: 1885166368}
+  simpleObjectController: {fileID: 1030392360}
+  volume: {fileID: 2030573225}
 --- !u!4 &355946832 stripped
 Transform:
   m_PrefabParentObject: {fileID: 445410, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
@@ -784,6 +876,14 @@ Prefab:
       propertyPath: textMesh
       value: 
       objectReference: {fileID: 1210988628}
+    - target: {fileID: 146642, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 177292, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
   m_IsPrefabParent: 0
@@ -1282,6 +1382,14 @@ Prefab:
       propertyPath: sliderIcon
       value: 
       objectReference: {fileID: 369271758}
+    - target: {fileID: 177292, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 146642, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37c09818ea30e5b42ac21f1e6ac3550b, type: 2}
   m_IsPrefabParent: 0
@@ -1487,7 +1595,7 @@ MonoBehaviour:
   slice_interval: 0.25
   slices_measure: 1
   slices_measure_2: 1
-  invert: 1
+  invert: 0
   slices:
   - {fileID: 2800000, guid: 74aae7134282eed40a7c16fb8810fca6, type: 3}
   - {fileID: 2800000, guid: dd3d491187b55594dbdb00fd1583b631, type: 3}

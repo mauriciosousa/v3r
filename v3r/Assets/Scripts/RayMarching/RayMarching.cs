@@ -114,7 +114,7 @@ public class RayMarching : MonoBehaviour
 
 		// need to set this vector because unity bakes object that are non uniformily scaled
 		//TODO:FIX
-		//Shader.SetGlobalVector("_VolumeScale", cubeTarget.transform.localScale);
+		Shader.SetGlobalVector("_VolumeScale", cubeTarget.transform.localScale);
 
 		// Render depths
 		_ppCamera.targetTexture = frontDepth;
