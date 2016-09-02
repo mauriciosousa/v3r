@@ -101,7 +101,7 @@ public class SimpleObjController : MonoBehaviour {
 		{
 			resetVolume();
 		}
-		if (Input.GetKeyDown(KeyCode.P))
+		if (Input.GetKeyDown(KeyCode.M))
 		{
 			if (_vrmode)
 			{

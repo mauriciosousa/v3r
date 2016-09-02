@@ -34,6 +34,18 @@ public class VolumeInfo : MonoBehaviour {
         //transform.position = p;
         //transform.forward = transform.position - Camera.main.transform.position;
 
+
+
+
+
+        /**
+        * AXES
+        * - Sagittal axis - Posterior to anterior
+        * - Frontal axis - left to right
+        * - Vertical axis - inferior to superior
+        */
+
+
         string s = "";
 
         s = "" + simpleObjectController.volumeFace;
@@ -42,22 +54,22 @@ public class VolumeInfo : MonoBehaviour {
 
         if (simpleObjectController.volumeFace == CubemapFace.PositiveX)
         {
-            s = "Sagittal Right";
+            s = "Lateral Left";
             v = volume.clipDimensions.x;
         }
         else if (simpleObjectController.volumeFace == CubemapFace.NegativeX)
         {
-            s = "Sagittal Left";
+            s = "Lateral Right";
             v = volume.clipDimensions2.x;
         }
         else if (simpleObjectController.volumeFace == CubemapFace.NegativeZ)
         {
-            s = "Horizontal Top";
+            s = "Horizontal Inferior";
             v = volume.clipDimensions.z;
         }
         else if (simpleObjectController.volumeFace == CubemapFace.PositiveZ)
         {
-            s = "Horizontal Bottom";
+            s = "Horizontal Superior";
             v = volume.clipDimensions2.z;
         }
 
